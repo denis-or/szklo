@@ -8,12 +8,10 @@ Alguns dias atrás, estava folheando o livro de Epidemiologia do Prof. Szklo, [E
 
 Neste repositório, estão os primeiros arquivos feitos em `Rmarkdown`.
 
-# Autor
+### Autor
 
-Denis de Oliveira Rodrigues
-Doutorando em Epidemiologia em Saúde Pùblica na Escola Nacional de Saúde Pública (ENSP/Fiocruz)
+Denis de Oliveira Rodrigues <br> Doutorando em Epidemiologia em Saúde Pùblica na Escola Nacional de Saúde Pública (ENSP/Fiocruz)
 
+### Ajuda?
 
-# Ajuda?
-
-Manda um issue e conversamos
+Manda um issue e conversamos.
