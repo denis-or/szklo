@@ -36,9 +36,9 @@ df_tab_1_3 |>
     .fns = ~ tidyr::replace_na(.x, 0)
   )) |>
   gt::gt() |>
-  gt::tab_header(
-    title = gt::md("**TABLE 1-3** Rearrangement of the data shown in Table 1-2 by birth cohort."),
-  ) |> 
+  gt::tab_header(title = gt::md(
+    "**TABLE 1-3** Rearrangement of the data shown in Table 1-2 by birth cohort."
+  ),) |>
   gt::cols_label(
     birth_cohort_range = gt::md("**Birth cohort range**"),
     midpoint_cohort = gt::md("**Midpoint**"),
@@ -50,25 +50,22 @@ df_tab_1_3 |>
     age_group_65 = gt::md("**65**"),
     age_group_75 = gt::md("**75**")
   ) |>
-  # gt::cols_align(align = "left",
-  #                columns = birth_cohort_range) |>
-  gt::cols_align(
-    align = "center",
-    columns = 2:9
-  ) |>
+  gt::cols_align(align = "center",
+                 columns = 2:9) |>
   gt::tab_spanner(
     id = "s1",
     label = gt::md("**Age group (midpoint, in years) <br> Prevalence (per 1000)**"),
     columns = 3:9
   ) |>
-
+  
   gt::tab_style(
     style = list(
       gt::cell_fill(color = "#6CA439"),
       gt::cell_text(
         color = "#FFFFFF",
-        size = gt::px(16),
-        align = "left"
+        size = gt::px(19),
+        align = "left",
+        font = "Myriad Pro"
       )
     ),
     locations = gt::cells_title(groups = "title")
@@ -76,13 +73,11 @@ df_tab_1_3 |>
   gt::tab_style(
     style = list(
       gt::cell_fill(color = "#9ABC85"),
-      gt::cell_text(color = "#FFFFFF")
+      gt::cell_text(color = "#FFFFFF",
+                    font = "Myriad Pro")
     ),
-    locations = list(
-      gt::cells_column_spanners(),
-      gt::cells_column_labels()
-      
-    )
+    locations = list(gt::cells_column_spanners(),
+                     gt::cells_column_labels())
   )  |>
   gt::tab_style(
     style = gt::cell_borders(
@@ -90,20 +85,8 @@ df_tab_1_3 |>
       color = "#FFFFFF",
       weight = gt::px(2)
     ),
-    locations = list(
-      gt::cells_title(groups = "title"),
-      gt::cells_body()
-    )
-  ) |>
-    gt::tab_style(
-    style = gt::cell_borders(
-      sides = c("left","right"),
-      color = "#FFFFFF",
-      weight = gt::px(2)
-    ),
-    locations = list(
-      gt::cells_column_labels()
-    )
+    locations = list(gt::cells_title(groups = "title"),
+                     gt::cells_body())
   ) |>
   gt::tab_style(
     style = gt::cell_borders(
@@ -111,18 +94,19 @@ df_tab_1_3 |>
       color = "#FFFFFF",
       weight = gt::px(2)
     ),
+    locations = list(gt::cells_column_labels())
+  ) |>
+  gt::tab_style(style = list(gt::cell_text(size = 14,
+                                           font = "Myriad Pro")),
+                locations = gt::cells_body())  |>
+  gt::tab_style(
+    style = gt::cell_borders(
+      sides = c("left", "right"),
+      color = "#FFFFFF",
+      weight = gt::px(2)
+    ),
     locations = list(gt::cells_column_spanners("s1"))
-  ) |> 
-  # gt::tab_style(
-  #   style = gt::cell_borders(
-  #     sides = c("left"),
-  #     color = "red",
-  #     weight = gt::px(12)
-  #   ),
-  #   locations = list(gt::cells_column_labels("midpoint"))
-  # ) |> 
-  # gt::cells_column_spanners(),
-  # gt::cells_column_labels()
+  ) |>
   gt::tab_style(
     style = "padding-left:15px",
     locations = list(
@@ -138,9 +122,7 @@ df_tab_1_3 |>
     row.striping.include_stub = TRUE,
     row.striping.background_color = "#E6EDE2"
   ) |>
-  gt::opt_table_font(font = list(
-    gt::google_font(name = "Roboto Condensed"),
-    "Arial Narrow"))
+  gt::opt_table_font(font = list("Myriad Pro", "Myriad Pro Condensed"))
 
 ```
 
@@ -167,7 +149,7 @@ df_tab_1_1_update <- data.frame(
 
 
 ```{r}
-g1 <- df_tab_1_3_t |> #View()
+g1 <- df_tab_1_3_t |>
   ggplot2::ggplot(ggplot2::aes(x = midpoint_age,
                                y = prevalence)) +
   ggplot2::geom_point(ggplot2::aes(group = midpoint_cohort),
@@ -187,11 +169,12 @@ g1 <- df_tab_1_3_t |> #View()
   )+
   ggplot2::annotate(
     "text",
-    x = c(18, 28, 38, 48, 58),
+    x = c(17, 28, 38, 48, 58),
     y = c(33, 29, 24, 22, 20),
     label = c("1970", "1960", "1950", "1940", "1930"),
     size = 5,
-    angle = c(-1, 10, 15, 20, 25)
+    angle = c(6, 10, 15, 20, 25),
+    family = "Arial"
   ) +
     ggplot2::annotate(
     "text",
@@ -199,7 +182,8 @@ g1 <- df_tab_1_3_t |> #View()
     y = c(39),
     label = c("2005 cross-sectional\nsurvey"),
     size = 5,
-    angle = -32
+    angle = -29,
+    family = "Arial"
   ) +
   ggplot2::scale_x_continuous(
     breaks = seq(0, 80, 10),
@@ -215,11 +199,11 @@ g1 <- df_tab_1_3_t |> #View()
     panel.border = ggplot2::element_rect(color = "#83AF64", linewidth = 1.5),
     panel.grid = ggplot2::element_blank(),
     plot.background = ggplot2::element_rect(color = "#83AF64", linewidth = 0.5),
-    plot.caption = ggplot2::element_text(hjust = 0),
+    plot.caption = ggplot2::element_text(hjust = 0, family = "Arial"),
     axis.ticks = ggplot2::element_line(linewidth = 0.5, color = "#83AF64"),
     axis.ticks.length = ggplot2::unit(5, "pt"),
-    axis.title = ggplot2::element_text(size = 14),
-    axis.text =  ggplot2::element_text(size = 14),
+    axis.title = ggplot2::element_text(size = 14, family = "Arial",color = "black"),
+    axis.text =  ggplot2::element_text(size = 14, family = "Arial",color = "black"),
   )
 
 
@@ -234,16 +218,24 @@ my_g <- grid::grobTree(
   # grid::textGrob(
   gridtext::richtext_grob(
     "**FIGURE 1-3** Plotting of the data in Figure 1-2 by birth cohort (see also Table 1-3). The dotted lines represent the different<br>birth cohorts (from 1930 to 1970) as they converge to the 2005 cross-sectional survey (solid line, as in Figure 1-1).",
-    x = .05,
+    x = .03,
     hjust = 0,
+    margin = grid::unit(c(0.3, 0.3, 0.3, 0.3), "pt"),
     gp = grid::gpar(col = "#FFFFFF",
-                    fontsize = 14,
-                    fontfamily = "Roboto Condensed")
+                    fontsize = 16,
+                    fontfamily = "Myriad Pro")
   )
 ) |> 
   ggplotify::as.grob()
 ```
 
-```{r fig.align='center', fig.width=10}
-gridExtra::grid.arrange(g1, my_g, heights = c(9, 1.2))
+```{r fig.align='center', fig.width=9}
+gridExtra::grid.arrange(g1, my_g, heights = c(9, 2))
+```
+
+```{r}
+
+g2 <- gridExtra::arrangeGrob(g1, my_g, heights = c(9, 2)) |> ggplotify::as.ggplot()
+ggplot2::ggsave("../figure_1_3.png",g2, width = 9, height = 5)
+
 ```

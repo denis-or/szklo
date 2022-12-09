@@ -49,17 +49,18 @@ g1 <- df_tab_1_3 |>
   ggplot2::geom_line(color = "#83AF64", linewidth = .8) +
   ggplot2::annotate(
     "text",
-    x = c(1931, 1939, 1949, 1959, 1969, 1969, 1969),
-    y = c(28, 32, 37, 41, 46, 36, 29),
+    x = c(1932, 1938, 1948, 1958, 1968, 1968, 1968),
+    y = c(29, 33, 38, 42, 47, 37, 30),
     label = c("75", "65", "55", "45", "35", "25", "15"),
-    size = 5
+    size = 5,
+    family = "Arial"
   ) + 
   ggplot2::scale_x_continuous(
     breaks = seq(1930, 1970, 10),
     expand = c(0, 0),
     limits = c(1928, 1972)
   ) +
-  ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0, 51)) +
+  ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0, 53)) +
   ggplot2::labs(x = "Birth cohort",
                 y = "Prevalence (per 1000)") +
   ggplot2::theme_bw() +
@@ -68,11 +69,11 @@ g1 <- df_tab_1_3 |>
     panel.border = ggplot2::element_rect(color = "#83AF64", linewidth = 1.5),
     panel.grid = ggplot2::element_blank(),
     plot.background = ggplot2::element_rect(color = "#83AF64", linewidth = 0.5),
-    plot.caption = ggplot2::element_text(hjust = 0),
+    plot.caption = ggplot2::element_text(hjust = 0, family = "Arial"),
     axis.ticks = ggplot2::element_line(linewidth = 0.5, color = "#83AF64"),
     axis.ticks.length = ggplot2::unit(5, "pt"),
-    axis.title = ggplot2::element_text(size = 14),
-    axis.text =  ggplot2::element_text(size = 14),
+    axis.title = ggplot2::element_text(size = 14, family = "Arial",color = "black"),
+    axis.text =  ggplot2::element_text(size = 14, family = "Arial",color = "black"),
   )
 
 
@@ -87,15 +88,24 @@ my_g <- grid::grobTree(
   # grid::textGrob(
   gridtext::richtext_grob(
     "**FIGURE 1-4** Alternative display of the data in Figure 1-3. Birth cohorts are represented in the x-axis. The lines represent <br>age groups (labeled using italicized numbers representing the midpoints, in years).",
-    x = .05,
+    x = .03,
     hjust = 0,
+    margin = grid::unit(c(0.3, 0.3, 0.3, 0.3), "pt"),
     gp = grid::gpar(col = "#FFFFFF",
-                    fontsize = 14,
-                    fontfamily = "Roboto Condensed")
+                    fontsize = 15.5,
+                    fontfamily = "Myriad Pro")
   )
 ) |> 
   ggplotify::as.grob()
 ```
-```{r fig.align='center', fig.width=10}
-gridExtra::grid.arrange(g1, my_g, heights = c(9, 1.2))
+
+```{r fig.align='center', fig.width=9}
+gridExtra::grid.arrange(g1, my_g, heights = c(9, 2))
+```
+
+```{r}
+
+g2 <- gridExtra::arrangeGrob(g1, my_g, heights = c(9, 2)) |> ggplotify::as.ggplot()
+ggplot2::ggsave("../figure_1_4.png",g2, width = 9, height = 5)
+
 ```

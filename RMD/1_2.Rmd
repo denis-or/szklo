@@ -68,8 +68,9 @@ df_tab_1_2 |>
       gt::cell_fill(color = "#6CA439"),
       gt::cell_text(
         color = "#FFFFFF",
-        size = gt::px(16),
-        align = "left"
+        size = gt::px(19),
+        align = "left",
+        font = "Myriad Pro"
       )
     ),
     locations = gt::cells_title(groups = "title")
@@ -77,7 +78,8 @@ df_tab_1_2 |>
   gt::tab_style(
     style = list(
       gt::cell_fill(color = "#9ABC85"),
-      gt::cell_text(color = "#FFFFFF")
+      gt::cell_text(color = "#FFFFFF",
+                    font = "Myriad Pro")
     ),
     locations = list(
       gt::cells_column_spanners(spanners = "s1"),
@@ -99,6 +101,9 @@ df_tab_1_2 |>
       gt::cells_body()
     )
   ) |>
+  gt::tab_style(style = list(gt::cell_text(size = 14,
+                                           font = "Myriad Pro")),
+                locations = gt::cells_body())  |>
   gt::tab_style(
     style = "padding-left:15px",
     locations = list(
@@ -106,16 +111,17 @@ df_tab_1_2 |>
       gt::cells_column_labels(columns = age_group),
       gt::cells_body(columns = age_group)
     )
-  ) |>
+  ) |> 
   gt::opt_row_striping() |>
   gt::tab_options(
     heading.padding = gt::px(15),
-    table.width = "100%",
+    table.width = "80%",
     row.striping.include_stub = TRUE,
     row.striping.background_color = "#E6EDE2"
   ) |>
-  gt::opt_table_font(font = list(gt::google_font(name = "Roboto Condensed"),
-                                 "Arial Narrow"))
+  gt::opt_table_font(
+    font = list("Myriad Pro", "Myriad Pro Condensed")
+  )
 
 ```
 
@@ -143,7 +149,8 @@ g1 <-  df_tab_1_2_t |>
     x = c(43, 53, 63, 73),
     y = c(13, 19, 25, 33),
     label = c("1975", "1985", "1995", "2005"),
-    size = 6
+    size = 5,
+    family = "Arial"
   ) +
   ggplot2::scale_x_continuous(
     breaks = seq(0, 80, 10),
@@ -159,11 +166,11 @@ g1 <-  df_tab_1_2_t |>
     panel.border = ggplot2::element_rect(color = "#83AF64", linewidth = 1.5),
     panel.grid = ggplot2::element_blank(),
     plot.background = ggplot2::element_rect(color = "#83AF64", linewidth = 0.5),
-    plot.caption = ggplot2::element_text(hjust = 0),
+    plot.caption = ggplot2::element_text(hjust = 0, family = "Arial"),
     axis.ticks = ggplot2::element_line(linewidth = 0.5, color = "#83AF64"),
     axis.ticks.length = ggplot2::unit(5, "pt"),
-    axis.title = ggplot2::element_text(size = 14),
-    axis.text =  ggplot2::element_text(size = 14),
+    axis.title = ggplot2::element_text(size = 14, family = "Arial",color = "black"),
+    axis.text =  ggplot2::element_text(size = 14, family = "Arial",color = "black"),
   )
 
 
@@ -178,17 +185,26 @@ my_g <- grid::grobTree(
   # grid::textGrob(
   gridtext::richtext_grob(
     "**FIGURE 1-2** Hypothetical data from a series of cross-sectional studies of prevalence of disease Y (per 1000) in a<br>population, by age and survey date (calendar time), 1975, 1985, 1995, and 2005 (based on data from Table 1-2).",
-    x = .05,
+    x = .03,
     hjust = 0,
+    margin = grid::unit(c(0.3, 0.3, 0.3, 0.3), "pt"),
     gp = grid::gpar(col = "#FFFFFF",
-                    fontsize = 14,
-                    fontfamily = "Roboto Condensed")
+                    fontsize = 15.5,
+                    fontfamily = "Myriad Pro")
   )
 ) |> 
   ggplotify::as.grob()
 
 ```
 
-```{r fig.align='center', fig.width=10}
-gridExtra::grid.arrange(g1, my_g, heights = c(9, 1.2))
+```{r fig.align='center', fig.width=9}
+gridExtra::grid.arrange(g1, my_g, heights = c(9, 2))
 ```
+
+```{r}
+
+g2 <- gridExtra::arrangeGrob(g1, my_g, heights = c(9, 2)) |> ggplotify::as.ggplot()
+ggplot2::ggsave("../figure_1_2.png",g2, width = 9, height = 5)
+
+```
+
