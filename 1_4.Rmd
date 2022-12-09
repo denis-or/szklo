@@ -1,0 +1,101 @@
+---
+title: "Epidemiology: Beyond the Basics"
+subtitle: "Moyses Szklo e F. Javier Nieto<br><br>"
+author: "**Elaboração:**<br>Denis de Oliveira Rodrigues<br>Doutorando em Epidemiologia em Saúde Pública<br>Escola Nacional de Saúde Pública/Fiocruz"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Table 1-3 on page 8.
+
+```{r}
+df_tab_1_3 <-
+  tibble::tibble(
+    birth_cohort_range = c(
+      "1925-1934",
+      "1935–1944",
+      "1945–1954",
+      "1955–1964",
+      "1965–1974"
+    ),
+    midpoint_cohort = c(1930, 1940, 1950, 1960, 1970),
+    age_group_15 = c(NA, NA, NA, 17, 28),
+    age_group_25 = c(NA, NA, 14, 23, 35),
+    age_group_35 = c(NA, 12, 19, 30, 45),
+    age_group_45 = c(10, 18, 26, 40, NA),
+    age_group_55 = c(15, 22, 36, NA, NA),
+    age_group_65 = c(20, 31, NA, NA, NA),
+    age_group_75 = c(27, NA, NA, NA, NA)
+  ) |>
+  tidyr::pivot_longer(
+    cols = tidyselect::starts_with("age_group_"),
+    names_to = "midpoint_age",
+    values_to = "prevalence",
+    names_prefix = "age_group_",
+    names_transform = list(midpoint_age = as.numeric)
+  )
+```
+
+
+```{r}
+g1 <- df_tab_1_3 |> 
+  ggplot2::ggplot(ggplot2::aes(x = midpoint_cohort,
+                               y = prevalence,
+                               group = midpoint_age)) +
+  ggplot2::geom_point(color = "#83AF64", size = 2) +
+  ggplot2::geom_line(color = "#83AF64", linewidth = .8) +
+  ggplot2::annotate(
+    "text",
+    x = c(1931, 1939, 1949, 1959, 1969, 1969, 1969),
+    y = c(28, 32, 37, 41, 46, 36, 29),
+    label = c("75", "65", "55", "45", "35", "25", "15"),
+    size = 5
+  ) + 
+  ggplot2::scale_x_continuous(
+    breaks = seq(1930, 1970, 10),
+    expand = c(0, 0),
+    limits = c(1928, 1972)
+  ) +
+  ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0, 51)) +
+  ggplot2::labs(x = "Birth cohort",
+                y = "Prevalence (per 1000)") +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    plot.margin = ggplot2::margin(10, 100, 10, 150, unit = "pt"),
+    panel.border = ggplot2::element_rect(color = "#83AF64", linewidth = 1.5),
+    panel.grid = ggplot2::element_blank(),
+    plot.background = ggplot2::element_rect(color = "#83AF64", linewidth = 0.5),
+    plot.caption = ggplot2::element_text(hjust = 0),
+    axis.ticks = ggplot2::element_line(linewidth = 0.5, color = "#83AF64"),
+    axis.ticks.length = ggplot2::unit(5, "pt"),
+    axis.title = ggplot2::element_text(size = 14),
+    axis.text =  ggplot2::element_text(size = 14),
+  )
+
+
+my_g <- grid::grobTree(
+  grid::rectGrob(
+    # width = grid::unit(10, "npc"),
+    gp = grid::gpar(
+      fill = "#6CA439",
+      col = "#9ABC85"
+      )
+    ),
+  # grid::textGrob(
+  gridtext::richtext_grob(
+    "**FIGURE 1-4** Alternative display of the data in Figure 1-3. Birth cohorts are represented in the x-axis. The lines represent <br>age groups (labeled using italicized numbers representing the midpoints, in years).",
+    x = .05,
+    hjust = 0,
+    gp = grid::gpar(col = "#FFFFFF",
+                    fontsize = 14,
+                    fontfamily = "Roboto Condensed")
+  )
+) |> 
+  ggplotify::as.grob()
+```
+```{r fig.align='center', fig.width=10}
+gridExtra::grid.arrange(g1, my_g, heights = c(9, 1.2))
+```

@@ -15,13 +15,16 @@ Página 6:
 df_tab_1_2 <-
   tibble::tibble(
     age_group = c("10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79"),
-    midpoint = c(15, 25, 35, 45, 55, 65, 75),
+    midpoint_age = c(15, 25, 35, 45, 55, 65, 75),
     prevalence_1975 = c(17, 14, 12, 10, NA, NA, NA),
     prevalence_1985 = c(28, 23, 19, 18, 15, NA, NA),
     prevalence_1995 = c(NA, 35, 30, 26, 22, 20, NA),
     prevalence_2005 = c(NA, NA, 45, 40, 36, 31, 27)
   )
 ```
+
+Tentativa falha de reproduzir o identificador *Prevalence (per 1000)*.
+<br>
 
 ```{r}
 df_tab_1_2 |>
@@ -31,36 +34,46 @@ df_tab_1_2 |>
   )) |>
   gt::gt() |>
   gt::tab_header(
-    title = gt::md("**TABLE 1-2** Hypothetical data from a series of cross-sectional studies of prevalence of disease Y in a population, by age and survey date (calendar time), 1975–2005."),
-  ) |>
+    title = gt::md("**TABLE 1-2** Hypothetical data from a series of cross-sectional studies of prevalence of disease Y in a population, by age<br>and survey date (calendar time), 1975–2005."),
+  ) |> 
   gt::cols_label(
     age_group = gt::md("**Age group<br>(years)**"),
-    midpoint = gt::md("**Midpoint<br>(years)**"),
+    midpoint_age = gt::md("**Midpoint<br>(years)**"),
     prevalence_1975 = gt::md("**1975**"),
     prevalence_1985 = gt::md("**1985**"),
     prevalence_1995 = gt::md("**1995**"),
     prevalence_2005 = gt::md("**2005**")
   ) |>
+  gt::cols_align(align = "left",
+                 columns = age_group) |>
   gt::cols_align(
     align = "center",
-    columns = c(midpoint, prevalence_1975, 
-                prevalence_1985,prevalence_1995, prevalence_2005)
-    ) |>
-    gt::tab_spanner(
+    columns = c(
+      midpoint_age,
+      prevalence_1975,
+      prevalence_1985,
+      prevalence_1995,
+      prevalence_2005
+    )
+  ) |>
+  gt::tab_spanner(
     id = "s1",
-    label = "Survey date",
+    label = gt::md("**Survey date <br> Prevalence (per 1000)**"),
     columns = prevalence_1975:prevalence_2005,
     gather = F
   ) |>
+
   gt::tab_style(
     style = list(
       gt::cell_fill(color = "#6CA439"),
-      gt::cell_text(color = "#FFFFFF", 
-                    size = gt::px(16),
-                    align = "left")
+      gt::cell_text(
+        color = "#FFFFFF",
+        size = gt::px(16),
+        align = "left"
+      )
     ),
-  locations = gt::cells_title(groups = "title")
-) |>
+    locations = gt::cells_title(groups = "title")
+  ) |>
   gt::tab_style(
     style = list(
       gt::cell_fill(color = "#9ABC85"),
@@ -69,15 +82,15 @@ df_tab_1_2 |>
     locations = list(
       gt::cells_column_spanners(spanners = "s1"),
       gt::cells_column_labels()
-
+      
     )
-  )  |> 
+  )  |>
   gt::tab_style(
     style = gt::cell_borders(
-      sides = "all", 
+      sides = "all",
       color = "#FFFFFF",
       weight = gt::px(2)
-      ),
+    ),
     locations = list(
       gt::cells_title(groups = "title"),
       gt::cells_stubhead(),
@@ -100,51 +113,58 @@ df_tab_1_2 |>
     table.width = "100%",
     row.striping.include_stub = TRUE,
     row.striping.background_color = "#E6EDE2"
-    ) |>
-  gt::opt_table_font(
-    font = list(
-      gt::google_font(name = "Roboto Condensed"),
-      "Arial Narrow"
-    )
-  )
+  ) |>
+  gt::opt_table_font(font = list(gt::google_font(name = "Roboto Condensed"),
+                                 "Arial Narrow"))
 
 ```
 
 ```{r}
+df_tab_1_2_t <- df_tab_1_2 |>
+  tidyr::pivot_longer(
+    cols = tidyselect::starts_with("prevalence"),
+    names_to = "ano",
+    values_to = "prevalence",
+    names_prefix = "prevalence_"
+  )
+```
 
-g1 <- df_tab_1_2 |>
-  tidyr::pivot_longer(cols = tidyselect::starts_with("prevalence"),
-                      names_to = "ano",
-                      values_to = "prevalence",
-                      names_prefix = "prevalence_"
-  ) |>
-  ggplot2::ggplot(ggplot2::aes(x = midpoint,
+
+```{r}
+
+g1 <-  df_tab_1_2_t |>
+  ggplot2::ggplot(ggplot2::aes(x = midpoint_age,
                                y = prevalence,
-                               group = ano
-                               )) +
-    ggplot2::geom_point(color = "#83AF64", size = 2) +
-    ggplot2::geom_line(color = "#83AF64", size = 1) +
-  ggplot2::annotate("text",
-                    x = c(43,53,63,73),
-                    y = c(13,19,25,33),
-                    label = c("1975","1985","1995","2005"),
-                    size = 6) +
-    ggplot2::scale_x_continuous(breaks = seq(0,80,10), expand = c(0, 0), limits = c(0,83)) +
-    ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0,53)) +
-    ggplot2::labs(x = "Age (years)",
-                  y = "Prevalence (per 1000)") +
-    ggplot2::theme_bw() +
-    ggplot2::theme(
-      plot.margin = ggplot2::margin(10,100,10,150, unit = "pt"),
-      panel.border = ggplot2::element_rect(color = "#83AF64", size = 1.5),
-      panel.grid = ggplot2::element_blank(),
-      plot.background = ggplot2::element_rect(color = "#83AF64", size = 0.5),
-      plot.caption = ggplot2::element_text(hjust = 0),
-      axis.ticks = ggplot2::element_line(size = 0.5, color = "#83AF64"),
-      axis.ticks.length = ggplot2::unit(5, "pt"),
-      axis.title = ggplot2::element_text(size = 14),
-      axis.text =  ggplot2::element_text(size = 14),
-    )
+                               group = ano)) +
+  ggplot2::geom_point(color = "#83AF64", size = 2) +
+  ggplot2::geom_line(color = "#83AF64", linewidth = 1) +
+  ggplot2::annotate(
+    "text",
+    x = c(43, 53, 63, 73),
+    y = c(13, 19, 25, 33),
+    label = c("1975", "1985", "1995", "2005"),
+    size = 6
+  ) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 80, 10),
+    expand = c(0, 0),
+    limits = c(0, 83)
+  ) +
+  ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0, 53)) +
+  ggplot2::labs(x = "Age (years)",
+                y = "Prevalence (per 1000)") +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    plot.margin = ggplot2::margin(10, 100, 10, 150, unit = "pt"),
+    panel.border = ggplot2::element_rect(color = "#83AF64", linewidth = 1.5),
+    panel.grid = ggplot2::element_blank(),
+    plot.background = ggplot2::element_rect(color = "#83AF64", linewidth = 0.5),
+    plot.caption = ggplot2::element_text(hjust = 0),
+    axis.ticks = ggplot2::element_line(linewidth = 0.5, color = "#83AF64"),
+    axis.ticks.length = ggplot2::unit(5, "pt"),
+    axis.title = ggplot2::element_text(size = 14),
+    axis.text =  ggplot2::element_text(size = 14),
+  )
 
 
 my_g <- grid::grobTree(

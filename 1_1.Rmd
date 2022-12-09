@@ -13,8 +13,8 @@ Página 4 e 5:
 
 ```{r}
 df_tab_1_1 <- data.frame(age_group = c("30-39","40-49","50-59","60-69","70-79"),
-                         midpoint = c(35,45,55,65,75),
-                         prevalence_2005 = c(45,40,36,31,27))
+                         midpoint_age = c(35,45,55,65,75),
+                         prevalence = c(45,40,36,31,27))
 ```
 
 
@@ -26,12 +26,16 @@ df_tab_1_1 |>
   ) |>
   gt::cols_label(
     age_group = gt::md("**Age group (years)**"),
-    midpoint = gt::md("**Midpoint (years)**"),
-    prevalence_2005 = gt::md("**2005 Prevalence (per 1000)**")
+    midpoint_age = gt::md("**Midpoint (years)**"),
+    prevalence = gt::md("**2005 Prevalence (per 1000)**")
   ) |>
   gt::cols_align(
+    align = "left",
+    columns = age_group
+    ) |>
+  gt::cols_align(
     align = "center",
-    columns = c(midpoint, prevalence_2005)
+    columns = c(midpoint_age, prevalence)
     ) |>
   gt::tab_style(
     style = list(
@@ -90,46 +94,48 @@ df_tab_1_1 |>
 ```{r}
 
 g1 <-
-  ggplot2::ggplot(data = df_tab_1_1, ggplot2::aes(x = midpoint,
-                                                  y = prevalence_2005)) +
-    ggplot2::geom_point(color = "#83AF64", size = 2) +
-    ggplot2::geom_line(color = "#83AF64", size = 1) +
-    ggplot2::scale_x_continuous(breaks = seq(0,80,10), expand = c(0, 0), limits = c(0,83)) +
-    ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0,53)) +
-    ggplot2::labs(x = "Age (years)",
-                  y = "Prevalence (per 1000)") +
-    ggplot2::theme_bw() +
-    ggplot2::theme(
-      plot.margin = ggplot2::margin(10,100,10,150, unit = "pt"),
-      panel.border = ggplot2::element_rect(color = "#83AF64", size = 1.5),
-      panel.grid = ggplot2::element_blank(),
-      plot.background = ggplot2::element_rect(color = "#83AF64", size = 0.5),
-      plot.caption = ggplot2::element_text(hjust = 0),
-      axis.ticks = ggplot2::element_line(size = 0.5, color = "#83AF64"),
-      axis.ticks.length = ggplot2::unit(5, "pt"),
-      axis.title = ggplot2::element_text(size = 14),
-      axis.text =  ggplot2::element_text(size = 14),
-    )
+  ggplot2::ggplot(data = df_tab_1_1, ggplot2::aes(x = midpoint_age,
+                                                  y = prevalence)) +
+  ggplot2::geom_point(color = "#83AF64", size = 2) +
+  ggplot2::geom_line(color = "#83AF64", linewidth = 1) +
+  ggplot2::scale_x_continuous(
+    breaks = seq(0, 80, 10),
+    expand = c(0, 0),
+    limits = c(0, 83)
+  ) +
+  ggplot2::scale_y_continuous(expand = c(0, 0), limits = c(0, 53)) +
+  ggplot2::labs(x = "Age (years)",
+                y = "Prevalence (per 1000)") +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    plot.margin = ggplot2::margin(10, 100, 10, 150, unit = "pt"),
+    panel.border = ggplot2::element_rect(color = "#83AF64", linewidth = 1.5),
+    panel.grid = ggplot2::element_blank(),
+    plot.background = ggplot2::element_rect(color = "#83AF64", linewidth = 0.5),
+    plot.caption = ggplot2::element_text(hjust = 0),
+    axis.ticks = ggplot2::element_line(linewidth = 0.5, color = "#83AF64"),
+    axis.ticks.length = ggplot2::unit(5, "pt"),
+    axis.title = ggplot2::element_text(size = 14),
+    axis.text =  ggplot2::element_text(size = 14),
+  )
 
 
 my_g <- grid::grobTree(
-  grid::rectGrob(
-    # width = grid::unit(10, "npc"),
-    gp = grid::gpar(
-      fill = "#6CA439",
-      col = "#9ABC85"
-      )
-    ),
+  grid::rectGrob(# width = grid::unit(10, "npc"),
+    gp = grid::gpar(fill = "#6CA439",
+                    col = "#9ABC85")),
   # grid::textGrob(
   gridtext::richtext_grob(
     "**FIGURE 1-1** Hypothetical data from a cross-sectional study of prevalence of disease Y in a population, by age, 2005<br>(based on data from Table 1-1).",
     x = .05,
     hjust = 0,
-    gp = grid::gpar(col = "#FFFFFF",
-                    fontsize = 14,
-                    fontfamily = "Roboto Condensed")
+    gp = grid::gpar(
+      col = "#FFFFFF",
+      fontsize = 14,
+      fontfamily = "Roboto Condensed"
+    )
   )
-) |> 
+) |>
   ggplotify::as.grob()
 
 ```
