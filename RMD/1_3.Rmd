@@ -26,6 +26,66 @@ df_tab_1_3 <-
   )
 ```
 
+Tentativa com `flextable`:
+
+```{r}
+library(flextable)
+# tema
+my_theme <- function(x, ...) {
+    x <- colformat_double(x, big.mark = "", decimal.mark = ",", digits = 0)
+    # x <- colformat_double(x, big.mark = "", decimal.mark = "", digits = 0)
+    x <- set_table_properties(x, layout = "fixed")
+    x <- border_remove(x)
+    std_border <- officer::fp_border(width = 1, color = "white")
+    x <- border_outer(x, part="all", border = std_border )
+    x <- border_inner_h(x, border = std_border, part="all")
+    x <- border_inner_v(x, border = std_border, part="all")
+    x <- font(x, fontname = "Myriad Pro", part = "all")
+    x <- color(x, color = "white", part = "header")
+    x <- bold(x, i = 2:nrow_part(x, "header"), part = "header") 
+    x <- fontsize(x, size = 14, part = "all")
+    x <- align(x, j = 2:ncol_keys(x), align = "center", part = "all")
+    x <- bg(x, i = 1, j = 1, bg = "#6CA439", part = "header")
+    x <- bg(x, i = 2:nrow_part(x, "header"), j = 1:ncol_keys(x), bg = "#9ABC85", part = "header")
+    x <- bg(x, i = seq_len(nrow_part(x, "body"))%%2!=1, bg = "#E6EDE2", part = "body")
+    x <- line_spacing(x, space = 1.5, part = "all")
+    x <- padding(x, j = 1, padding = 10, part = "header")
+    x <- padding(x, j = 1, padding.left = 10, part = "body")
+    # fit_to_width(x, max_width = 8)
+    autofit(x)
+}
+
+df_tab_1_3 |>
+  dplyr::mutate(across(
+    .cols = dplyr::starts_with("age_group"),
+    .fns = ~ tidyr::replace_na(.x, 0)
+  )) |>
+  flextable::flextable() |>
+  flextable::merge_h_range(j1 = "age_group_15", j2 = "age_group_75", part = "header") |>
+  flextable::set_header_labels(values = list(
+    "birth_cohort_range" = "Birth cohort range",
+    "midpoint_cohort" = "Midpoint",
+    "age_group_15" = "Prevalence (per 1000)")) |> 
+  flextable::add_header_row(
+    values = c("Birth cohort range", "Midpoint", "15", "25", "35", "45", "55", "65", "75"),
+    colwidths = rep(1,9)
+  ) |> 
+  flextable::add_header_row(
+    values = c("Birth cohort range", "Midpoint", "Age group (midpoint, in years)"),
+    colwidths = c(1,1,7)
+  ) |> 
+  flextable::merge_v(part = "header") |> 
+  flextable::valign(j= 1:2, valign = "bottom", part = "header") |> 
+  flextable::add_header_lines("TABLE 1-3\tRearrangement of the data shown in Table 1-2 by birth cohort.") |> 
+  my_theme() 
+
+
+  
+  
+
+```
+
+
 Tentativa falha de reproduzir o identificador *Prevalence (per 1000)*.
 <br>
 
@@ -125,7 +185,6 @@ df_tab_1_3 |>
   gt::opt_table_font(font = list("Myriad Pro", "Myriad Pro Condensed"))
 
 ```
-
 
 ```{r}
 df_tab_1_3_t <- df_tab_1_3 |>
